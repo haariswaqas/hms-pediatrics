@@ -4,6 +4,24 @@ from django.core.exceptions import ImproperlyConfigured
 from datetime import timedelta
 import dj_database_url
 
+import sys
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
