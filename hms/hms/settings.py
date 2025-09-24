@@ -229,16 +229,15 @@ if DEBUG:
     CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
     CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://redis:6379/0")
 else:
-    # Production - use your Redis Cloud URLs or fallback to synchronous tasks
-    CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "")
-    CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "")
+    # Production - use Redis Cloud
+    CELERY_BROKER_URL = os.environ.get("REDIS_URL")
+    CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL")
     
-    # If no Redis configured, run tasks synchronously (no async processing)
     if not CELERY_BROKER_URL:
-        CELERY_TASK_ALWAYS_EAGER = True  # Execute tasks synchronously
+        # fallback to synchronous tasks if no Redis
+        CELERY_TASK_ALWAYS_EAGER = True
         CELERY_TASK_EAGER_PROPAGATES = True
-        # Use database for task results instead of Redis
-        CELERY_RESULT_BACKEND = 'db+postgresql://' + os.environ.get('DATABASE_URL', '').replace('postgresql://', '')
+
 
 CELERY_TIMEZONE = "UTC"
 CELERY_ENABLE_UTC = True
