@@ -117,26 +117,19 @@ ELASTICSEARCH_DSL = {
     'default': {
         'hosts': [
             {
-                'host': os.environ.get("ELASTICSEARCH_HOST", "your-cluster-id.es.region.gcp.elastic-cloud.com"),
-                'port': int(os.environ.get("ELASTICSEARCH_PORT", 9243)),
+                'host': os.environ.get("ELASTICSEARCH_HOST"),
+                'port': int(os.environ.get("ELASTICSEARCH_PORT", 9200)),
                 'scheme': 'https',
             }
         ],
-        # Option A: Username + Password auth
-        'http_auth': (
-            os.environ.get("ELASTICSEARCH_USERNAME", "elastic"),
-            os.environ.get("ELASTICSEARCH_PASSWORD", ""),
+        'api_key': (
+            os.environ.get("ELASTICSEARCH_API_ID"),
+            os.environ.get("ELASTICSEARCH_API_KEY"),
         ),
-
-        # Option B (preferred): API key auth
-        # 'api_key': (
-        #     os.environ.get("ELASTICSEARCH_API_ID", ""),
-        #     os.environ.get("ELASTICSEARCH_API_KEY", ""),
-        # ),
-
         'verify_certs': True,
     }
 }
+
 # ----------------------------
 # Stripe
 # ----------------------------
