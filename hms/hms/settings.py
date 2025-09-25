@@ -113,20 +113,22 @@ else:
 # ----------------------------
 # Elasticsearch
 # ----------------------------
+from elasticsearch import Elasticsearch
+
+ELASTICSEARCH_API_ID = os.environ.get("ELASTICSEARCH_API_ID")
+ELASTICSEARCH_API_KEY = os.environ.get("ELASTICSEARCH_API_KEY")
+
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': [
-            {
-                'host': os.environ.get("ELASTICSEARCH_HOST"),
-                'port': int(os.environ.get("ELASTICSEARCH_PORT", 9200)),
-                'scheme': 'https',
-            }
-        ],
-        'api_key': (
-            os.environ.get("ELASTICSEARCH_API_ID"),
-            os.environ.get("ELASTICSEARCH_API_KEY"),
-        ),
-        'verify_certs': True,
+        'hosts': os.environ.get("ELASTICSEARCH_HOST"),  # e.g. https://your-deployment.es.us-east-1.aws.cloud.es.io:443
+        'http_auth': (ELASTICSEARCH_API_ID, ELASTICSEARCH_API_KEY),
+    },
+}
+
+connections = {
+    "default": {
+        "hosts": [os.environ.get("ELASTICSEARCH_HOST")],
+        "api_key": (ELASTICSEARCH_API_ID, ELASTICSEARCH_API_KEY),
     }
 }
 
