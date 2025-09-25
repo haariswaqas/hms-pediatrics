@@ -24,7 +24,7 @@ class RegisterView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         # Default role set to 'Parent' if not specified
-        role = self.request.data.get('role', 'Parent')
+        role = self.request.data.get('role', 'Admin')
         
         # Grab the license_document file from request.FILES (if any)
         license_doc = self.request.FILES.get('license_document', None)
