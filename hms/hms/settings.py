@@ -115,22 +115,28 @@ else:
 # ----------------------------
 from elasticsearch import Elasticsearch
 
+from elasticsearch_dsl.connections import connections
+import os
+
+ELASTICSEARCH_HOST = os.environ.get("ELASTICSEARCH_HOST")
 ELASTICSEARCH_API_ID = os.environ.get("ELASTICSEARCH_API_ID")
 ELASTICSEARCH_API_KEY = os.environ.get("ELASTICSEARCH_API_KEY")
 
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': os.environ.get("ELASTICSEARCH_HOST"),  # e.g. https://your-deployment.es.us-east-1.aws.cloud.es.io:443
-        'http_auth': (ELASTICSEARCH_API_ID, ELASTICSEARCH_API_KEY),
+        'hosts': [ELASTICSEARCH_HOST],
+        'api_key': (ELASTICSEARCH_API_ID, ELASTICSEARCH_API_KEY),
     },
 }
 
-connections = {
-    "default": {
-        "hosts": [os.environ.get("ELASTICSEARCH_HOST")],
+# Also make sure default connection is registered
+connections.configure(
+    default={
+        "hosts": [ELASTICSEARCH_HOST],
         "api_key": (ELASTICSEARCH_API_ID, ELASTICSEARCH_API_KEY),
     }
-}
+)
+
 
 # ----------------------------
 # Stripe
