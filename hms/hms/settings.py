@@ -269,13 +269,19 @@ CORS_ALLOW_HEADERS = [
 # ----------------------------
 # Email
 # ----------------------------
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+EMAIL_BACKEND = "django_mailjet.backends.MailjetBackend"
+MAILJET_API_KEY = os.environ.get("MAILJET_API_KEY")
+MAILJET_SECRET_KEY = os.environ.get("MAILJET_SECRET_KEY")
+
+DEFAULT_FROM_EMAIL = "haarisali9@gmail.com"  # Must match a verified sender/domain in Mailjet
+
 
 # ----------------------------
 # Third-party API credentials
