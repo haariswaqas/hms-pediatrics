@@ -1,20 +1,58 @@
 # api/tasks.py
 from celery import shared_task
-from django.core.mail import send_mail, EmailMessage
+from mailjet_rest import Client
 from django.conf import settings
+import os
+
 
 @shared_task
 def send_email_task(subject, message, recipient_list, from_email=None, fail_silently=False, attachments=None):
     print(f"Triggering email task for: {recipient_list}")
     from_email = from_email or settings.DEFAULT_FROM_EMAIL
+
     try:
+        mailjet = Client(auth=(os.environ["MAILJET_API_KEY"], os.environ["MAILJET_SECRET_KEY"]), version="v3.1")
+
+        # Build recipients
+        to_list = [{"Email": email} for email in recipient_list]
+
+        # Prepare base message
+        msg = {
+            "From": {"Email": from_email, "Name": "My App"},
+            "To": to_list,
+            "Subject": subject,
+            "TextPart": message,
+            "HTMLPart": f"<p>{message}</p>",
+        }
+
+        # Handle attachments if provided
         if attachments:
-            email = EmailMessage(subject, message, from_email, recipient_list)
+            msg["Attachments"] = []
             for attachment in attachments:
-                email.attach_file(attachment)
-            email.send(fail_silently=fail_silently)
+                try:
+                    with open(attachment, "rb") as f:
+                        import base64
+                        file_content = base64.b64encode(f.read()).decode()
+                        msg["Attachments"].append(
+                            {
+                                "ContentType": "application/octet-stream",
+                                "Filename": attachment.split("/")[-1],
+                                "Base64Content": file_content,
+                            }
+                        )
+                except Exception as e:
+                    print(f"Failed to attach {attachment}: {e}")
+
+        # Send email
+        data = {"Messages": [msg]}
+        result = mailjet.send.create(data=data)
+
+        if result.status_code == 200:
+            print(f"Email sent successfully to: {recipient_list}")
         else:
-            send_mail(subject, message, from_email, recipient_list, fail_silently=fail_silently)
-        print(f"Email sent successfully to: {recipient_list}")
+            print(f"Mailjet error: {result.status_code}, {result.json()}")
+
     except Exception as e:
+        if not fail_silently:
+            raise
         print(f"Error sending email: {e}")
