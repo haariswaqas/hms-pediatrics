@@ -82,8 +82,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         if User.objects.filter(email=attrs['email']).exists():
             raise serializers.ValidationError({"email": "Email already in use."})
         # If role != PARENT, require a license_document
-        if attrs.get('role') != User.PARENT and not attrs.get('license_document'):
-            raise serializers.ValidationError({"license_document": "This field is required for medical professionals."})
+        #if attrs.get('role') != User.PARENT and not attrs.get('license_document'):
+           # raise serializers.ValidationError({"license_document": "This field is required for medical professionals."})
         return attrs
 
     def create(self, validated_data):
