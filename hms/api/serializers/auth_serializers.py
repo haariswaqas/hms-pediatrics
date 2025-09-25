@@ -172,16 +172,7 @@ class LoginSerializer(TokenObtainPairSerializer):
                 )
                 raise serializers.ValidationError("OTP verification is required but no OTP record was found.")
 
-            # 2. Admin verification for medical professionals
-            if user.role != User.PARENT and not user.created_by_admin:
-                create_system_log_task.delay(
-                    level='WARNING',
-                    message=f"Login attempt failed: Admin verification pending for {user.email}",
-                    user_id=user.id
-                )
-                raise serializers.ValidationError(
-                    "Your account is pending admin verification. Please wait for a verification email from the administrator before attempting to log in."
-                )
+           
 
       
 
